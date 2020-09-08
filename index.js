@@ -1,31 +1,32 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
-const Dishes=require('./models/dishes');
+const Dishes = require('./models/dishes');
 
+const url = 'mongodb://localhost:27017/conFusion';
+const connect = mongoose.connect(url);
 
+connect.then((db) => {
 
-const url='mongodb://localhost:27017/conFusion';
-const connect=mongoose.connect(url);
+    console.log('Connected correctly to server');
 
+    Dishes.create({
+        name: 'Uthappizza',
+        description: 'test'
+    })
+  .then((dish) => {
+     console.log(dish);
+      return Dishes.find({}).exec();
+  })
+        .then((dishes) => {
+            console.log(dishes);
 
-connect.then((db)=>{
- console.log("connected correctly to server");
+            return Dishes.remove({});
+        })
+        .then(() => {
+            return mongoose.connection.close();
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 
- var newDish=Dishes({
-   name:'uthappizza',
-   description:"test"
- });
-
- newDish.save().then((dish)=>{
-   console.log(dish);
-   return Dishes.find({}).exec();
- })
- .then((dishes)=>{
-   console.log(dishes);
-   return Dishes.remove({});
- }).then(()=>{
-   return mongoose.connection.close();
- }).catch((err)=>{
-   console.log(err);
- });
 });
